@@ -1,41 +1,38 @@
-import { Controller, Get, Post, Body, Param,  NotFoundException,  BadRequestException, } 
-       from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, ParseIntPipe, HttpException, HttpStatus } from '@nestjs/common';
+import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
-@Controller('/users')
+@Controller('users')
 export class UsersController {
-    private users :CreateUserDto[]=[];
+  constructor(private readonly usersService: UsersService) {}
 
-    @Get('/getallusers')
-    findAll() {
-        return this.users;
-    }
-
-    @Get(':id')
-  findOne(@Param('id') id: string) {
-    const index = Number(id);
-    if (Number.isNaN(index) || index < 0) {
-      throw new BadRequestException('Invalid id parameter');
-    }
-    const user = this.users[index];
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
+  // ✅ GET all users
+  @Get()
+  getAllUsers() {
+    return this.usersService.findAll();
   }
 
+  // ✅ GET single user by ID
+  @Get(':id')
+  getUserById(@Param('id', ParseIntPipe) id: number) {
+    try {
+      return this.usersService.findOne(id);
+    } catch (error) {
+      throw new HttpException(error.message, error.getStatus?.() || HttpStatus.BAD_REQUEST);
+    }
+  }
 
-    @Post("createusers")
-    create(@Body() createUserDto : CreateUserDto) {
-         // example: duplicate email check
-    const exists = this.users.find(u => u.email === createUserDto.email);
-    if (exists) {
-      throw new BadRequestException('Email already exists');
+  // ✅ POST route — create new user
+  @Post()
+  createUser(@Body() createUserDto: CreateUserDto) {
+    try {
+      const newUser = this.usersService.create(createUserDto);
+      return {
+        message: 'User created successfully!',
+        user: newUser,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, error.getStatus?.() || HttpStatus.BAD_REQUEST);
     }
-        this.users.push(createUserDto);
-        return {
-            message: 'User created successfully',
-            data: createUserDto,
-        };
-    }
- }   
+  }
+}
