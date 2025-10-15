@@ -12,7 +12,7 @@ export class Task {
   @Column()
   description: string;
 
-  // Optional: Relation to User
   @ManyToOne(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
   user: User;
 }
+

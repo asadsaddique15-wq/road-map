@@ -1,34 +1,41 @@
-import { Controller,Get,Post,Body,Param,Put,Delete,} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { Task } from './task.entity';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post('/create')
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  create(
+    @Body() body: { title: string; description: string; userId: number },
+  ): Promise<Task> {
+    const { title, description, userId } = body;
+    // For now, we'll just create a dummy user reference (later link actual user)
+    const user = { id: userId } as any;
+    return this.tasksService.createTask(title, description, user);
   }
 
   @Get('/fetchall')
-  findAll() {
-    return this.tasksService.findAll();
+  getAll(): Promise<Task[]> {
+    return this.tasksService.getAllTasks();
   }
 
-  @Get('/fetch/:id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
+  @Get('/:id')
+  getById(@Param('id') id: number): Promise<Task | null> {
+    return this.tasksService.getTaskById(id);
   }
 
-  @Put('/update/:id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(+id, updateTaskDto);
+  @Put('/:id')
+  update(
+    @Param('id') id: number,
+    @Body() body: Partial<Task>,
+  ): Promise<Task | null> {
+    return this.tasksService.updateTask(id, body);
   }
 
-  @Delete('/delete/:id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+  @Delete('/:id')
+  delete(@Param('id') id: number): Promise<void> {
+    return this.tasksService.deleteTask(id);
   }
 }

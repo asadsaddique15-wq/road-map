@@ -19,7 +19,10 @@ import { Task } from './tasks/task.entity';
       password: 's3tc#CYD',        // this is your actual password
       database: 'task_manager_db', // your existing database name
       entities: [User, Task],      // your entities
-      synchronize: true,           // auto-create tables 
+      synchronize: false,           // auto-create tables 
+         migrations: ['dist/migrations/*.js'],
+      migrationsRun: true,  // automatically runs pending migrations on startup
+      
     }),
     UsersModule,
     TasksModule,
