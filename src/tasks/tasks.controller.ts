@@ -1,41 +1,41 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task } from './task.entity';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
+  // 🟢 CREATE new task
   @Post('/create')
-  create(
-    @Body() body: { title: string; description: string; userId: number },
-  ): Promise<Task> {
-    const { title, description, userId } = body;
-    // For now, we'll just create a dummy user reference (later link actual user)
-    const user = { id: userId } as any;
-    return this.tasksService.createTask(title, description, user);
+  async createTask(@Body() dto: CreateTaskDto) {
+    return this.tasksService.createTask(dto);
   }
 
+  //  READ all tasks
   @Get('/fetchall')
-  getAll(): Promise<Task[]> {
+  async getAllTasks() {
     return this.tasksService.getAllTasks();
   }
 
+  // READ one task by ID
   @Get('/:id')
-  getById(@Param('id') id: number): Promise<Task | null> {
+  async getTaskById(@Param('id', ParseIntPipe) id: number) {
     return this.tasksService.getTaskById(id);
   }
 
+  //  UPDATE task
   @Put('/:id')
-  update(
-    @Param('id') id: number,
-    @Body() body: Partial<Task>,
-  ): Promise<Task | null> {
-    return this.tasksService.updateTask(id, body);
+  async updateTask(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: Partial<CreateTaskDto>,
+  ) {
+    return this.tasksService.updateTask(id, data);
   }
 
+  //  DELETE task
   @Delete('/:id')
-  delete(@Param('id') id: number): Promise<void> {
+  async deleteTask(@Param('id', ParseIntPipe) id: number) {
     return this.tasksService.deleteTask(id);
   }
 }

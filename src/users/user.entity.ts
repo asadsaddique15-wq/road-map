@@ -14,6 +14,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({ nullable: true }) // already existing users will not have it yet
+  phoneNumber: string;
     //one user can have many tasks
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
