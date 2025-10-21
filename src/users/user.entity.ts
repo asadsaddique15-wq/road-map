@@ -17,6 +17,10 @@ export class User {
 
   @Column({ nullable: true }) // already existing users will not have it yet
   phoneNumber: string;
+
+
+  @Column({ default: 'User' })
+  role: string;
     //one user can have many tasks
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];

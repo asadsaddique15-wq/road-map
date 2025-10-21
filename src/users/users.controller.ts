@@ -1,15 +1,20 @@
-import {Controller,Get,Post,Body,Param,Put,Delete,NotFoundException,BadRequestException,InternalServerErrorException,}
-           from '@nestjs/common';
+import {
+  Controller, Request, Get, Post, Body, Param, Put, Delete, NotFoundException, BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
-  // Register new user (password will be hashed)
+  // Register new user, (password will be hashed)
   @Post('')
   async register(@Body() createUserDto: CreateUserDto) {
     try {
@@ -48,6 +53,12 @@ export class UsersController {
     } catch (error) {
       throw new InternalServerErrorException('Failed to fetch users');
     }
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    // this route requires a valid token
+    return req.user; // comes from jwt.strategy.ts validate()
   }
 
   // Get one user by ID

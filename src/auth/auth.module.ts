@@ -5,10 +5,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './jwt.strategy';
+import { jwtConstants } from './jwt.constants';
 
 @Module({
   imports: [
-    UsersModule,
+    UsersModule, //authService can use usersService
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'mySecretKey', //secret key for signing tokens
@@ -17,5 +18,6 @@ import { JwtStrategy } from './jwt.strategy';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}
