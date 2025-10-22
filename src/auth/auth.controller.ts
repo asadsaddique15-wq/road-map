@@ -1,29 +1,69 @@
-import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
+import {Controller,Post,Body,UseGuards,Get,Request,Param,Put,Delete,BadRequestException,} 
+            from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard'
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { RolesGuard } from './roles.guard';
+import { Roles } from './roles.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  //post/register  new user
-  @Post('register')
+
+  //register new user
+  @Post('')
   async register(
-    @Body() body: { name: string; email: string; password: string; phoneNumber?: string },
+    @Body() body: { name: string; email: string; password: string; phoneNumber?: string; role?: string },
   ) {
-    return this.authService.register(body.name, body.email, body.password, body.phoneNumber);
+    if (!body.name || !body.email || !body.password) {
+      throw new BadRequestException('Name, email, and password are required');
+    }
+
+    return this.authService.register(
+      body.name,
+      body.email,
+      body.password,
+      body.phoneNumber,
+      body.role,
+    );
   }
 
-  // post// Login existing user
+  //login user
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
+    if (!body.email || !body.password) {
+      throw new BadRequestException('Email and password are required');
+    }
     return this.authService.login(body.email, body.password);
   }
-  
-  @UseGuards(JwtAuthGuard) 
-  @Get('')
+
+  //protected profile route
+  @UseGuards(JwtAuthGuard)
+  @Get('token')
   getProfile(@Request() req) {
-    // if token is valid, NestJS will attach the user info to req.user
+    console.log('Authenticated user:', req.user);
     return { message: 'Protected route accessed!', user: req.user };
   }
 
+  //admin only route
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
+  @Get('Admin')
+  getAdminData(@Request() req) {
+    return { message: 'Welcome Admin! You have special access.', user: req.user };
+  }
+
+  //update user (for Admin or same user)
+  @UseGuards(JwtAuthGuard)
+  @Put(':id')
+  async updateUser(@Param('id') id: number, @Body() body: any) {
+    return this.authService.updateUser(id, body);
+  }
+
+  //deleting user (for Admin or same user)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
+  @Delete(':id')
+  async deleteUser(@Param('id') id: number) {
+    return this.authService.deleteUser(id);
+  }
 }

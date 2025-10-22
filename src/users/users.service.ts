@@ -15,13 +15,11 @@ export class UsersService {
 
   //create a new user with hashed password
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const salt = await bcrypt.genSalt(); // generate random salt
-    const hashedPassword = await bcrypt.hash(createUserDto.password, salt); // hash password
-
+    
     //create new user with hashed password
     const user = this.usersRepository.create({
       ...createUserDto,
-      password: hashedPassword,
+      password: createUserDto.password,
     });
 
     // Save to database

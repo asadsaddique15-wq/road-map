@@ -16,4 +16,8 @@ export class CreateUserDto {
   @IsOptional() // means it’s not required, but allowed
   @IsString()
   phoneNumber?: string;
+
+   role?: string;
+
+
 }
