@@ -35,7 +35,7 @@ export class AuthService {
     };
   }
 
-  //login existing user
+  //loging in user
   async login(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
     if (!user) {

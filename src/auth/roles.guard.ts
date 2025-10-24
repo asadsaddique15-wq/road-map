@@ -1,23 +1,27 @@
-
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
+import { ROLES_KEY } from './roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    //get the roles required for this route (from @Roles decorator)
-    const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     if (!requiredRoles) {
-      return true; // if no role is specified, route is open
+      return true;
     }
 
     const { user } = context.switchToHttp().getRequest();
-    //Check if the logged-in user's role matches
-    return requiredRoles.includes(user.role);
+
+    console.log('Required Roles:', requiredRoles);
+    console.log('User Role:', user?.role);
+
+    //role check (case-insensitive)
+    return requiredRoles.some((role) => role.toLowerCase() === user?.role?.toLowerCase());
   }
 }
