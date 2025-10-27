@@ -13,7 +13,7 @@ export class UsersService {
     private usersRepository: Repository<User>, // inject User repository
   ) {}
 
-  //create a new user with hashed password
+  //create a new user
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     
     //create new user with hashed password
