@@ -3,24 +3,41 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  //NestJS application instance
+  const app = await NestFactory.create(AppModule, { cors: true });
 
-  //swagger configuration
-  const config = new DocumentBuilder()
-    .setTitle('Roadmap API') 
-    .setDescription('API documentation for Auth, Users, and Tasks modules')
-    .setVersion('1.0') 
-    .addBearerAuth() //enabling JWT bearer token
-    .build();
+  //allowing API to be accessed from web apps
+  app.enableCors();
 
-  //creating swagger document and setup the Swagger UI route
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); // Visit http://localhost:3000/api
+  //swagger API documentation
+  //only enable Swagger in non-production environments for security
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Roadmap API')
+      .setDescription('API documentation for Authentication, Users, and Tasks modules')
+      .setVersion('1.0')
+      .addBearerAuth() //"Authorize"
+      .build();
 
+    //create swagger document
+    const document = SwaggerModule.createDocument(app, config);
+
+    //setup swagger UI at http://localhost:3000/api)
+    SwaggerModule.setup('api', app, document);
+
+    console.log('Swagger documentation enabled at /api');
+  }
+
+  //set port 
   const port = process.env.PORT || 5000;
-    await app.listen(port);
-  console.log(` Server running on http://localhost:${port}`);
-  console.log(`Swagger docs available at http://localhost:${port}/api`);
-}
 
+  //NestJS server
+  await app.listen(port);
+
+  //logs
+  console.log(`🚀 Server running on http://localhost:${port}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`📘 Swagger docs available at http://localhost:${port}/api`);
+  }
+}
 bootstrap();

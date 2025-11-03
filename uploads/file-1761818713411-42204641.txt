@@ -1,0 +1,52 @@
+Microsoft Windows [Version 10.0.19045.6332]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>echo "# firstdaygithub" >> README.md
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git init
+Initialized empty Git repository in C:/Users/ASAD/Desktop/AccellionX1/anotherday/.git/
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git add README.md
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git commit -m "kuch bhi likh lo"
+[master (root-commit) e9f122f] kuch bhi likh lo
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git branch -M main
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git remote add origin https://github.com/asadsaddique15-wq/firstdaygithub.git
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git push -u origin main
+Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 240 bytes | 80.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/asadsaddique15-wq/firstdaygithub.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git checkout -b
+error: switch `b' requires a value
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git checkout -b "branch1"
+Switched to a new branch 'branch1'
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git branch -a
+* branch1
+  main
+  remotes/origin/main
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git fetch --all
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git checkout main
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>git branch -a
+  branch1
+* main
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/main
+
+C:\Users\ASAD\Desktop\AccellionX1\anotherday>
